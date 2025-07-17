@@ -20,8 +20,8 @@
       "name": "On form submission",
       "type": "n8n-nodes-base.formTrigger",
       "position": [
-        -320,
-        360
+        -380,
+        380
       ],
       "webhookId": "4e1e20d4-f759-42c8-8439-87b93f43aa7c",
       "typeVersion": 2.2
@@ -59,8 +59,8 @@
       "name": "Embeddings Ollama",
       "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
       "position": [
-        1140,
-        1220
+        1180,
+        1080
       ],
       "typeVersion": 1,
       "credentials": {
@@ -72,14 +72,12 @@
     },
     {
       "parameters": {
-        "dataType": "binary",
-        "loader": "pdfLoader",
         "options": {
           "metadata": {
             "metadataValues": [
               {
                 "name": "filename",
-                "value": "={{ $json.File[0].filename }}"
+                "value": "={{ $json.filename }}"
               }
             ]
           }
@@ -89,30 +87,29 @@
       "name": "Default Data Loader",
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "position": [
-        960,
-        580
+        940,
+        540
       ],
       "typeVersion": 1
     },
     {
       "parameters": {
-        "chunkSize": 200,
-        "chunkOverlap": 20,
+        "chunkOverlap": 100,
         "options": {}
       },
       "id": "660380c5-63da-4404-98e6-f9c0ee9aaa90",
       "name": "Recursive Character Text Splitter",
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "position": [
-        1120,
-        740
+        1080,
+        700
       ],
       "typeVersion": 1
     },
     {
       "parameters": {
         "content": "## Data Ingestion\n**Add data to the semantic database",
-        "height": 680,
+        "height": 700,
         "width": 1620,
         "color": 3
       },
@@ -120,8 +117,8 @@
       "name": "Sticky Note",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -380,
-        240
+        -420,
+        260
       ],
       "typeVersion": 1
     },
@@ -141,9 +138,9 @@
     },
     {
       "parameters": {
-        "options": {
-          "systemMessage": "# Rol\nEres un asistente dispuesto a ayudar a los usuarios a resolver sus casos\n\n# Tareas\n- Tu función principal es responder a pregunta del cliente\n\n- Utiliza la herramienta Database para acceder a informacion de guias sobre como resolver los casos\n- No inventes información.\n\n# Notas\n- Tus respuestas deben ser claras y concisas, no debes exceder los 500 caracteres.\n- Contesta solo en español.\n- Devuelve siempre un mensaje entendible para el usuario.\n- Se amable\n"
-        }
+        "promptType": "define",
+        "text": "=# Rol\nEres un asistente experto y confiable de soporte técnico de Feco, especializado en resolver casos de usuario. Tu objetivo es proporcionar respuestas precisas, basadas en hechos y extraídas **EXCLUSIVAMENTE** de la documentación oficial. Mantén un tono profesional y servicial.\n\n# Tareas\n- Tu función principal es responder a la pregunta del usuario.\n- **Proceso de Razonamiento (Chain of Thought):**\n    1.  Analiza la <pregunta_del_usuario>.\n    2.  Busca la información más relevante en el contexto proporcionado por la herramienta Database para responder a la pregunta.\n    3.  Determina si la información en el contexto es suficiente y directamente aplicable.\n    4.  Si la respuesta a la pregunta del usuario **NO se encuentra explícitamente en el contexto**, debes indicar claramente: \"No tengo información sobre eso en el contexto proporcionado. Por favor, consulta la sección [nombre de la sección relevante si puedes inferirla de la pregunta, ej. 'Gestión de Cuentas'] en nuestra aplicación o contacta a soporte.\"\n    5.  Si la información es suficiente, formula una respuesta clara y concisa.\n- No inventes, infieras, adivines o generes ninguna información que no esté directamente respaldada por el proporcionada en el contexto\n\n# Notas\n- Tus respuestas deben ser claras, concisas y **no deben exceder los 500 caracteres**.\n- Contesta siempre en español.\n- Si tu respuesta incluye un comando SQL, verifica que la sintaxis esté completa y sea correcta.\n- Si utilizas información del contexto, cita la fuente usando el `filename` que se encuentra en la metadata del contexto (proporciona el `filename` tal cual, sin modificarlo).\n- **Ejemplo de Respuesta (Few-Shot):**\n    <ejemplo>\n    Usuario: ¿Cómo puedo restablecer mi contraseña si la he olvidado?\n    Contexto: [\n        {\n            \"content\": \"Para restablecer su contraseña, visite la página de inicio de sesión y haga clic en '¿Olvidó su contraseña?'. Se le enviará un enlace de restablecimiento a su correo electrónico registrado. Siga las instrucciones del correo para crear una nueva contraseña. Si tiene problemas, contacte a soporte técnico.\",\n            \"filename\": \"guia_restablecimiento_contrasena.pdf\"\n        },\n        {\n            \"content\": \"La gestión de perfiles de usuario se realiza en la sección 'Mi Perfil' de la aplicación.\",\n            \"filename\": \"guia_perfil_usuario.pdf\"\n        }\n    ]\n    Respuesta: Para restablecer tu contraseña, visita la página de inicio de sesión y haz clic en '¿Olvidó su contraseña?'. Se te enviará un enlace de restablecimiento a tu correo electrónico. Sigue las instrucciones del correo para crear una nueva contraseña. (Fuente: guia_restablecimiento_contrasena.pdf)\n    </ejemplo>\n\n<pregunta_del_usuario>\n{{ $json.chatInput }}\n</pregunta_del_usuario>\n\ncontexto:",
+        "options": {}
       },
       "id": "af562588-2e8c-4c0b-b041-d6fc8c0affd0",
       "name": "AI Agent",
@@ -160,8 +157,8 @@
       "name": "Simple Memory",
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "position": [
-        1720,
-        500
+        1740,
+        520
       ],
       "typeVersion": 1.3
     },
@@ -188,8 +185,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
       "typeVersion": 1,
       "position": [
-        1600,
-        620
+        1540,
+        520
       ],
       "id": "f6c23c0c-25da-42de-a1c4-a7cf233c3a13",
       "name": "Ollama Chat Model",
@@ -202,49 +199,25 @@
     },
     {
       "parameters": {
-        "mode": "retrieve-as-tool",
-        "toolDescription": "información sobre las guías para solucionar casos",
-        "qdrantCollection": {
-          "__rl": true,
-          "value": "rag_collection",
-          "mode": "list",
-          "cachedResultName": "rag_collection"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
-      "typeVersion": 1.3,
-      "position": [
-        1820,
-        580
-      ],
-      "id": "e5687753-7b0a-4403-a11b-ee158d1f5db0",
-      "name": "Database",
-      "credentials": {
-        "qdrantApi": {
-          "id": "sFfERYppMeBnFNeA",
-          "name": "Local QdrantApi database"
-        }
-      }
-    },
-    {
-      "parameters": {
         "operation": "pdf",
-        "binaryPropertyName": "File",
-        "options": {}
+        "binaryPropertyName": "={{ Object.keys($('Loop Over Items').item.binary)[0] }}",
+        "options": {
+          "keepSource": "binary"
+        }
       },
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        440,
-        380
+        300,
+        400
       ],
       "id": "e81c3db8-2567-413c-a00b-0dfbb185e8cf",
-      "name": "Extract from File"
+      "name": "Extract from File",
+      "executeOnce": false
     },
     {
       "parameters": {
-        "jsCode": "const inputText = $input.first().json.text; // Asume que el texto viene de un nodo anterior\n\nconst name = $('On form submission').first().json.File[0].filename;\n\nlet cleanedText = inputText\n\nconst patternsToRemove = [\n    /FECO PRODUCCIÓN\\s+\\w+\\s+\\d{4}/g,\n    /Publicado por\\s+Carvajal Tecnología y Servicios, \\d{4}/g,\n    /Control de Revisiones\\s+Fecha\\s+Elaborado\\s+Por\\s+Versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n];\n\nfor (const pattern of patternsToRemove) {\n    cleanedText = cleanedText.replace(pattern, '');\n}\n\n// --- 2. Eliminar líneas de índice/contenido (con puntos) ---\n// Ejemplo: \"1. Propósito ..................................................................................................................................... 4\"\ncleanedText = cleanedText.replace(/^\\s*\\d+\\.\\s+.*?\\.{5,}\\s*\\d+\\s*$/gm, '');\n\n// --- 3. Eliminar números de página aislados (si los hubiera, no visibles en tu muestra) ---\ncleanedText = cleanedText.replace(/^\\s*\\d+\\s*$/gm, ''); // `gm` para multilínea global\n\n// --- 4. Normalizar saltos de línea y espacios ---\n// Reemplazar 3 o más saltos de línea con 2 (para asegurar separación de párrafos)\ncleanedText = cleanedText.replace(/\\n{3,}/g, '\\n\\n');\n// Reemplazar saltos de línea simples (dentro de un párrafo) por un espacio\ncleanedText = cleanedText.replace(/(?<!\\n)\\n(?!\\n)/g, ' ');\n// Normalizar múltiples espacios a uno solo\ncleanedText = cleanedText.replace(/\\s+/g, ' ').trim();\n\n\nreturn [{ json: { name : cleanedText, filename : name } }];"
+        "jsCode": "const inputText = $input.first().json.text; // Asume que el texto viene de un nodo anterior\n\nlet cleanedText = inputText\n\nconst binaryFieldName = Object.keys($input.first().binary)[0];\nconst fileName = $input.first().binary[binaryFieldName].fileName;\n\nconst patternsToRemove = [\n    /FECO PRODUCCIÓN\\s+\\w+\\s+\\d{4}/g,\n    /Nomina Producción\\s+\\w+\\s+\\d{4}/g,\n    /FECO Piloto\\s+\\w+\\s+\\d{4}/g,\n    /FECO PRODUCCIÓN\\s+\\w+\\s+de\\s+\\d{4}/g,\n    /Entendemos la tecnología y la transformamos en soluciones/g,\n    /E BUSINESS –/g,\n    /Publicado por\\s+Carvajal Tecnología y Servicios, \\d{4}/g,\n    /Control de Revisiones\\s+Fecha\\s+Elaborado\\s+Por\\s+Versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /Control de versiones\\s+Fecha\\s+Elaborado\\s+Por\\s+Versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /Control de Versiones\\s+Fecha\\s+Elaborado\\s+por\\s+versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /^.*?\\.{5,}\\s*\\d+\\s*$/gm,\n    /.*?\\.{5,}\\s*\\d+\\s*$/gm  \n];\n\nfor (const pattern of patternsToRemove) {\n    cleanedText = cleanedText.replace(pattern, '');\n}\n\n// --- 2. Eliminar líneas de índice/contenido (con puntos) ---\n// Ejemplo: \"1. Propósito ..................................................................................................................................... 4\"\ncleanedText = cleanedText.replace(/^\\s*\\d+\\.\\s+.*?\\.{5,}\\s*\\d+\\s*$/gm, '');\ncleanedText = cleanedText.replace(/^\\.{5,}$/g, '')\n\n// --- 3. Eliminar números de página aislados (si los hubiera, no visibles en tu muestra) ---\ncleanedText = cleanedText.replace(/^\\s*\\d+\\s*$/gm, ''); // `gm` para multilínea global\n\n// --- 4. Normalizar saltos de línea y espacios ---\n// Reemplazar 3 o más saltos de línea con 2 (para asegurar separación de párrafos)\ncleanedText = cleanedText.replace(/\\n{3,}/g, '\\n\\n');\n// Reemplazar saltos de línea simples (dentro de un párrafo) por un espacio\ncleanedText = cleanedText.replace(/(?<!\\n)\\n(?!\\n)/g, ' ');\n// Normalizar múltiples espacios a uno solo\ncleanedText = cleanedText.replace(/\\s+/g, ' ').trim();\n\n\nreturn [{ json: { name : cleanedText, filename : fileName } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -257,34 +230,98 @@
     },
     {
       "parameters": {
-        "fieldToSplitOut": "File",
-        "include": "selectedOtherFields",
-        "fieldsToInclude": "','",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        120,
+        380
+      ],
+      "id": "667af4e8-9c98-43f8-ae3a-4ce312dc4c06",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "$binary",
         "options": {
+          "destinationFieldName": "",
           "includeBinary": true
         }
       },
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -80,
-        360
+        -120,
+        380
       ],
-      "id": "e3f2802b-757a-4c59-a194-7877de43149f",
-      "name": "Split Out"
+      "id": "361edb7d-563e-4945-a79e-cbfa89e9da7f",
+      "name": "Split Out",
+      "executeOnce": false,
+      "alwaysOutputData": false
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d1f52749-7f06-4579-b976-96f26ba1fd40",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.splitInBatches",
-      "typeVersion": 3,
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
       "position": [
-        160,
-        360
+        440,
+        400
       ],
-      "id": "997ea72a-babd-40f5-90d1-a5278a11bbb3",
-      "name": "Loop Over Items"
+      "id": "e39b9e78-be43-44f5-ad0a-ca638ee1e14d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contiene las guías sobre los distintos procedimientos de feco",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "rag_collection",
+          "mode": "list",
+          "cachedResultName": "rag_collection"
+        },
+        "topK": 3,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1940,
+        520
+      ],
+      "id": "e5687753-7b0a-4403-a11b-ee158d1f5db0",
+      "name": "Database",
+      "alwaysOutputData": true,
+      "credentials": {
+        "qdrantApi": {
+          "id": "sFfERYppMeBnFNeA",
+          "name": "Local QdrantApi database"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -371,25 +408,11 @@
         ]
       ]
     },
-    "Database": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ],
-      "ai_vectorStore": [
-        []
-      ]
-    },
     "Extract from File": {
       "main": [
         [
           {
-            "node": "Code",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -400,18 +423,12 @@
       "main": [
         [
           {
-            "node": "Qdrant Vector Store",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Split Out": {
-      "main": [
-        [
+          },
           {
-            "node": "Loop Over Items",
+            "node": "Qdrant Vector Store",
             "type": "main",
             "index": 0
           }
@@ -429,11 +446,54 @@
           }
         ]
       ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Database": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ],
+      "ai_vectorStore": [
+        []
+      ]
     }
   },
   "active": false,
   "settings": {},
-  "versionId": "885fd698-d939-4e79-a1ef-b27b960031fe",
+  "versionId": "c7f48681-3e50-4e5d-987a-08280113b138",
   "meta": {
     "templateId": "5148",
     "templateCredsSetupCompleted": true,
