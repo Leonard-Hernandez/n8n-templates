@@ -1,0 +1,1458 @@
+{
+  "name": "Chat Bot carvajal",
+  "nodes": [
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "=file_id",
+                "value": "={{ $('Set File ID').first().json.file_id }}"
+              },
+              {
+                "name": "file_title",
+                "value": "={{ $('Set File ID').first().json.file_title }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "e1fef3a7-a359-47a5-be8b-e27fd3c00487",
+      "name": "Default Data Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        3312,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Agent Tools for RAG",
+        "height": 528.85546469693,
+        "width": 583.4552380860637,
+        "color": 4
+      },
+      "id": "2d045e46-97f1-4edd-b1c5-43054bac45db",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        2304,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tool to Add a Google Drive File to Vector DB",
+        "height": 867,
+        "width": 3073,
+        "color": 5
+      },
+      "id": "974c025d-d696-4920-bded-13413e1841cd",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        544,
+        688
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "3b6de065-ed6f-432e-a2ce-0fac2cd35c43",
+      "name": "Extract Document Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        1280
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "id": "c28b2e6d-4254-451e-a082-1aae7e5f3b24",
+      "name": "Postgres Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        512
+      ],
+      "notesInFlow": false,
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $json.path }}",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $json.path.split(/[\\\\/]/).pop().split('.').pop(); }}",
+              "type": "string"
+            },
+            {
+              "id": "77d782de-169d-4a46-8a8e-a3831c04d90f",
+              "name": "file_title",
+              "value": "={{ $json.path.split(/[\\\\/]/).pop().split('.').slice(0, -1).join('.'); }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2dad3b3f-6977-43f7-9f88-ad2a9958491f",
+      "name": "Set File ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        992,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## RAG AI Agent with Chat Interface",
+        "height": 464.8027193303974,
+        "width": 1035.6381264595484
+      },
+      "id": "cde08c7f-8471-444b-8c90-27e801c5e04e",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9a9a245e-f1a1-4282-bb02-a81ffe629f0f",
+              "name": "chatInput",
+              "value": "={{ $json?.chatInput || $json.body.chatInput }}",
+              "type": "string"
+            },
+            {
+              "id": "b80831d8-c653-4203-8706-adedfdb98f77",
+              "name": "sessionId",
+              "value": "={{ $json?.sessionId || $json.body.sessionId}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "5ba320a8-f599-46b2-92e2-e8b798c1dfde",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "id": "74b15da4-1756-4293-b92d-7fc656d24bf4",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1312,
+        288
+      ],
+      "webhookId": "e104e40e-6134-4825-a6f0-8a646d882662"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "f787cce6-a92e-4f6d-831d-c4c0bdf13ef0",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "b0734ea1-3cac-47f9-9f88-1dfef810b11e",
+      "name": "Aggregate",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2544,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a28fb587-9286-499d-9d0d-e47e1139df87",
+      "name": "Summarize",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1,
+      "position": [
+        2752,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "Eres Arandito un agente de ia experto en los flujos y procesos de Carvajal Tecnologia y servicios\n\nTu **función principal y obligatoria** es **utilizar las herramientas disponibles** para encontrar, procesar, sintetizar y presentar la información solicitada. **BAJO NINGUNA CIRCUNSTANCIA debes intentar responder desde tu conocimiento interno o fabricar una respuesta.**\n\nTienes acceso a las siguientes **herramientas poderosas** y sus **reglas de uso estrictas**:\n\n1.  **`Query Document Rows`**\n    * **Propósito:** Ejecutar consultas SQL en tus documentos de datos tabulares (Excel, CSVs).\n    * **Regla de Uso:** Úsala **EXCLUSIVAMENTE** cuando la pregunta del usuario implique:\n        * **Cálculos o agregaciones:** `SUM`, `AVG`, `MAX`, `MIN`, `COUNT`.\n        * **Id necesario:** Necesitas un id para poder consultar por este, además de que este documento tiene que tener scheme para poder construir las consultas.\n        * **Filtrado preciso de datos:** Uso de cláusulas `WHERE` con condiciones específicas.\n        * **Análisis estructurado:** Preguntas sobre columnas, filas o relaciones directas en tablas.\n\t\t* **Puedes consultar el schema con la herramienta list_documents para mejorar la consulta\n    * **Output:** Devuelve los resultados de la consulta SQL.\n\n2.  **`Postgres PGVector Store1`**\n    * **Propósito:** Realizar una búsqueda de similitud semántica en la base de datos vectorial (Postgres PGVector Store) para encontrar los fragmentos de texto más relevantes de tus documentos.\n    * **Regla de Uso:** Utilízala para obtener información sobre los temas que pregunta el usuario y poder contrastarlos con la demás información encontrada con las otras herramientas\n    * **Output:** Devuelve fragmentos de texto relevantes de los documentos.\n\n3.  **`List Documents`**\n    * **Propósito:** Proporcionar una lista de todos los documentos disponibles en tu base de conocimientos.\n    * **Regla de Uso:** **Esta es tu primera herramienta a usar**.\n\t    * **ID:** El id encontrado en esta tabla te ayudara a buscar más información con las demás herramientas.\n\t    * **Relevancia:** De los resultados busca más información de los documentos que se alineen con la pregunta del usuario\n    * **Output:** Devuelve una lista de los documentos disponibles con sus **IDs** y/o metadatos.\n\n4.  **`Get File Contents`**\n    * **Propósito:** Extraer el texto completo de un documento específico buscándolo por su **ID**.\n    * **Regla de Uso:** Úsala **SOLO Y EXCLUSIVAMENTE DESPUÉS** de haber usado `list_documents()` y haber obtenido un `document_id` **VÁLIDO Y REAL** de la lista proporcionada por esa herramienta. **NUNCA debes inventar un `document_id` ni usar uno que no provenga directamente de `list_documents()`**. Si no has ejecutado `list_documents()` o no tienes un ID válido, no uses esta herramienta.\n    *  **Relevancia**: Busca el contenido de los documentos relevantes para poder dar una respuesta basada en esta información, y contrástala con la información de herramienta `Postgres PGVector Store1`.\n    * **Output:** Devuelve el texto completo del documento.\n\n---\n\n### Manejo de la Falta de Información (Mandatorio):\n\n**Si, después de utilizar todas las herramientas relevantes y seguir este proceso de pensamiento y flujo, no logras encontrar la información necesaria para formular una respuesta clara y completa:**\n\n**NO ALUCINES NI INVENTES INFORMACIÓN.**\nDebes responder al usuario de la siguiente manera, indicando que necesitas más detalles:\n\n\"No pude encontrar una respuesta concluyente con la información actual. ¿Podrías proporcionarme más detalles o contexto sobre lo que buscas?\"\n\n### Formato de salida (Mandatorio):\n\n**Siempre devuelve una respuesta entendible para el usuario, no devuelvas json sin sentido ni alucines la respuesta**\n\n**Si devuelves una consulta sql verifica que la consulta tenga una sintaxis correcta en sql**\n\n**Devolver siempre que sea posible la fuente de la respuesta, ya sea el nombre del archivo al cual se consulto o si fue una consulta a la base de datos vectorial**\n\n---"
+        }
+      },
+      "id": "a1736eb6-9c8c-43e1-b7d6-87d7a95ec9f5",
+      "name": "RAG AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1792,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c1376d86-2497-4ff2-93b5-61bc069e4ce7"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "2ae7faa7-a936-4621-a680-60c512163034",
+                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                    "rightValue": "xlsx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                    "rightValue": "=csv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "b69f5605-0179-4b02-9a32-e34bb085f82d",
+                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                    "rightValue": "txt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "e9c8fd57-67cc-48a4-a580-bd01501c0044",
+                    "leftValue": "={{ $('Set File ID').item.json.file_type }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": 3
+        }
+      },
+      "id": "f2b4c3a4-3cdd-4337-b0f3-09586459aace",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1840,
+        944
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "54359f7a-ab97-424f-9377-5388521d32ca",
+      "name": "Extract from Excel",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f422e2e0-381c-46ea-8f38-3f58c501d8b9",
+              "name": "schema",
+              "value": "={{ $('Extract from Excel').isExecuted ? $('Extract from Excel').first().json.keys().toJsonString() : $('Extract from CSV').first().json.keys().toJsonString() }}",
+              "type": "string"
+            },
+            {
+              "id": "bb07c71e-5b60-4795-864c-cc3845b6bc46",
+              "name": "data",
+              "value": "={{ $json.concatenated_data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3184,
+        848
+      ],
+      "id": "6d8581f0-cc15-4358-b77f-903316024c7c",
+      "name": "Set Schema"
+    },
+    {
+      "parameters": {
+        "options": {
+          "delimiter": ";"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        1088
+      ],
+      "id": "a460fa6a-5619-46e9-a31d-e4d656ff6b3f",
+      "name": "Extract from CSV"
+    },
+    {
+      "parameters": {
+        "content": "## Run Each Node Once to Set Up Database Tables",
+        "height": 300,
+        "width": 680,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        560,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "b687a158-8e47-41a7-a9cd-5ba77d77db17",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE document_metadata (\n    id TEXT PRIMARY KEY,\n    title TEXT,\n    created_at TIMESTAMP DEFAULT NOW(),\n    schema TEXT\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        688,
+        464
+      ],
+      "id": "21072a0c-602e-436c-8634-6cc8e17d2e62",
+      "name": "Create Document Metadata Table",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "CREATE TABLE document_rows (\n    id SERIAL PRIMARY KEY,\n    dataset_id TEXT REFERENCES document_metadata(id),\n    row_data JSONB  -- Store the actual row data\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        992,
+        464
+      ],
+      "id": "e4db6c47-aff5-487a-b5c5-3cb24250af9d",
+      "name": "Create Document Rows Table (for Tabular Data)",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool to fetch all available documents, including the table schema if the file is a CSV or Excel file.",
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "document_metadata",
+          "mode": "list",
+          "cachedResultName": "document_metadata"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        1840,
+        512
+      ],
+      "id": "d1904cda-8ddf-41d8-b925-26e177c1ce53",
+      "name": "List Documents",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Given a file ID, fetches the text from the document.",
+        "operation": "executeQuery",
+        "query": "SELECT \n    string_agg(text, ' ') as document_text\nFROM documents_pg\n  WHERE metadata->>'file_id' = $1\nGROUP BY metadata->>'file_id';",
+        "options": {
+          "queryReplacement": "={{ $fromAI('file_id') }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        1984,
+        512
+      ],
+      "id": "78f7bda6-997d-4dff-ae45-04ded549e179",
+      "name": "Get File Contents",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Run a SQL query - use this to query from the document_rows table once you know the file ID (which is the file path) you are querying. dataset_id is the file_id (file path) and you are always using the row_data for filtering, which is a jsonb field that has all the keys from the file schema given in the document_metadata table.\n\nExample query:\n\nSELECT AVG((row_data->>'revenue')::numeric)\nFROM document_rows\nWHERE dataset_id = '/data/shared/document.csv';\n\nExample query 2:\n\nSELECT \n    row_data->>'category' as category,\n    SUM((row_data->>'sales')::numeric) as total_sales\nFROM dataset_rows\nWHERE dataset_id = '/data/shared/document2.csv'\nGROUP BY row_data->>'category';",
+        "operation": "executeQuery",
+        "query": "{{ $fromAI('sql_query') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.5,
+      "position": [
+        2144,
+        512
+      ],
+      "id": "892248f1-5be8-4ec8-9589-ab47795dea23",
+      "name": "Query Document Rows",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        800,
+        800
+      ],
+      "id": "63f02ff6-1ace-496a-89c3-331ce2d41885",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "document_metadata",
+          "mode": "list",
+          "cachedResultName": "document_metadata"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Set File ID').item.json.file_id }}",
+            "title": "={{ $('Set File ID').item.json.file_title }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "schema",
+              "displayName": "schema",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1488,
+        832
+      ],
+      "id": "f32ae00c-772b-492d-a299-f36551d663db",
+      "name": "Insert Document Metadata",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "document_rows",
+          "mode": "list",
+          "cachedResultName": "document_rows"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dataset_id": "={{ $('Set File ID').item.json.file_id }}",
+            "row_data": "={{ $json.toJsonString().replaceAll(/'/g, \"''\") }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "dataset_id",
+              "displayName": "dataset_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_data",
+              "displayName": "row_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        2544,
+        1088
+      ],
+      "id": "d7dd688f-3515-40ea-8644-20426c148d65",
+      "name": "Insert Table Rows",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "document_metadata",
+          "mode": "list",
+          "cachedResultName": "document_metadata"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Set File ID').item.json.file_id }}",
+            "schema": "={{ $json.schema }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": true,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "schema",
+              "displayName": "schema",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        3408,
+        848
+      ],
+      "id": "2b5de6fc-27c5-4414-a0b2-cc3e613aa9c2",
+      "name": "Update Schema for Document Metadata",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "triggerOn": "folder",
+        "path": "/data/shared",
+        "events": [
+          "add",
+          "change"
+        ],
+        "options": {
+          "followSymlinks": true,
+          "usePolling": true
+        }
+      },
+      "type": "n8n-nodes-base.localFileTrigger",
+      "typeVersion": 1,
+      "position": [
+        608,
+        800
+      ],
+      "id": "9ff5adc4-a1ec-47ca-9e6c-26a269cbf9d4",
+      "name": "Local File Trigger"
+    },
+    {
+      "parameters": {
+        "fileSelector": "={{ $('Set File ID').item.json.file_id }}",
+        "options": {
+          "dataPropertyName": "=data"
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        960
+      ],
+      "id": "d18e170b-7f48-458d-a866-da060f512ce1",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        3072,
+        1280
+      ],
+      "id": "70d1c39f-5a7c-491a-a4ba-fd027622dee5",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        2560,
+        480
+      ],
+      "id": "c9bebd50-9844-41e4-8adb-57121d291a20",
+      "name": "Embeddings Ollama1",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 400,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        3200,
+        1408
+      ],
+      "id": "8afa6306-ac62-4b20-9e2a-b349ae4e7f74",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DO $$\nBEGIN\n    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'documents_pg') THEN\n        EXECUTE 'DELETE FROM documents_pg WHERE metadata->>''file_id'' LIKE ''%' || $1 || '%''';\n    END IF;\nEND\n$$;",
+        "options": {
+          "queryReplacement": "={{ $json.file_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1168,
+        832
+      ],
+      "id": "a9959c96-6fdc-4a35-9e1e-1fcd984101c9",
+      "name": "Delete Old Doc Records",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "DELETE FROM document_rows\nWHERE dataset_id LIKE '%' || $1 || '%';",
+        "options": {
+          "queryReplacement": "={{ $('Set File ID').item.json.file_id }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1328,
+        960
+      ],
+      "id": "96bc2710-e497-4fd3-b62d-7b51fff413ef",
+      "name": "Delete Old Data Records",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": "documents_pg",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1,
+      "position": [
+        3184,
+        1072
+      ],
+      "id": "499905ac-4f1b-4428-a836-4dd85a5f31f4",
+      "name": "Postgres PGVector Store",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents",
+        "toolDescription": "Use RAG to look up information in the knowledgebase.",
+        "tableName": "documents_pg",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePGVector",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        288
+      ],
+      "id": "e43987ce-1cee-4ef5-9c2c-68cd0dfd646a",
+      "name": "Postgres PGVector Store1",
+      "credentials": {
+        "postgres": {
+          "id": "OI9ARQrLXPhGmAeT",
+          "name": "pg vector"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "llama3.2:latest",
+        "options": {
+          "numCtx": 8064
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1552,
+        512
+      ],
+      "id": "d0c89bb0-0e7e-4f4e-a8fd-476af7df1ff9",
+      "name": "Ollama Chat Model",
+      "credentials": {
+        "ollamaApi": {
+          "id": "xHuYe0MDGOs9IpBW",
+          "name": "Local Ollama service"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "let json = $json\n\nlet cleanedText = json.text\n\nconst patternsToRemove = [\n    /FECO PRODUCCIÓN\\s+\\w+\\s+\\d{4}/g,\n    /Nomina Producción\\s+\\w+\\s+\\d{4}/g,\n    /FECO Piloto\\s+\\w+\\s+\\d{4}/g,\n    /FECO PRODUCCIÓN\\s+\\w+\\s+de\\s+\\d{4}/g,\n    /Entendemos la tecnología y la transformamos en soluciones/g,\n    /E BUSINESS –/g,\n    /Publicado por\\s+Carvajal Tecnología y Servicios, \\d{4}/g,\n    /Control de Revisiones\\s+Fecha\\s+Elaborado\\s+Por\\s+Versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /Control de versiones\\s+Fecha\\s+Elaborado\\s+Por\\s+Versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /Control de Versiones\\s+Fecha\\s+Elaborado\\s+por\\s+versión\\s+\\d+\\.\\d+\\s+\\w+\\s+\\d{4}\\s+[\\w\\s]+/g,\n    /^.*?\\.{5,}\\s*\\d+\\s*$/gm,\n    /.*?\\.{5,}\\s*\\d+\\s*$/gm  \n];\n\nfor (const pattern of patternsToRemove) {\n    cleanedText = cleanedText.replace(pattern, '');\n}\n\n// --- 2. Eliminar líneas de índice/contenido (con puntos) ---\n// Ejemplo: \"1. Propósito ..................................................................................................................................... 4\"\ncleanedText = cleanedText.replace(/^\\s*\\d+\\.\\s+.*?\\.{5,}\\s*\\d+\\s*$/gm, '');\ncleanedText = cleanedText.replace(/^\\.{5,}$/g, '')\n\n// --- 3. Eliminar números de página aislados (si los hubiera, no visibles en tu muestra) ---\ncleanedText = cleanedText.replace(/^\\s*\\d+\\s*$/gm, ''); // `gm` para multilínea global\n\n// --- 4. Normalizar saltos de línea y espacios ---\n// Reemplazar 3 o más saltos de línea con 2 (para asegurar separación de párrafos)\ncleanedText = cleanedText.replace(/\\n{3,}/g, '\\n\\n');\n// Reemplazar saltos de línea simples (dentro de un párrafo) por un espacio\ncleanedText = cleanedText.replace(/(?<!\\n)\\n(?!\\n)/g, ' ');\n// Normalizar múltiples espacios a uno solo\ncleanedText = cleanedText.replace(/\\s+/g, ' ').trim();\n\njson.text = cleanedText\nreturn json"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2592,
+        720
+      ],
+      "id": "bce69d0d-c8b5-4510-8c37-8e1acc7af203",
+      "name": "Code"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Extract Document Text": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set File ID": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Doc Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Set Schema",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from Excel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract from CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Document Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Extract from Excel": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert Table Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Schema": {
+      "main": [
+        [
+          {
+            "node": "Update Schema for Document Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from CSV": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert Table Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Documents": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get File Contents": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Document Rows": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Set File ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Document Metadata": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Local File Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Postgres PGVector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Doc Records": {
+      "main": [
+        [
+          {
+            "node": "Delete Old Data Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Old Data Records": {
+      "main": [
+        [
+          {
+            "node": "Insert Document Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres PGVector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "RAG AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Postgres PGVector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5756dbc8-edb3-43a0-af90-0ab857ab83dc",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
+  },
+  "id": "kd2BEHuom3XynTnl",
+  "tags": []
+}
