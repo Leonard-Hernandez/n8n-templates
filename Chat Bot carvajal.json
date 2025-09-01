@@ -198,7 +198,7 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        2384,
+        2448,
         720
       ]
     },
@@ -242,7 +242,7 @@
         "promptType": "define",
         "text": "={{ $json.chatInput }}",
         "options": {
-          "systemMessage": "Eres Arandito un agente de ia experto en los flujos y procesos de Carvajal Tecnologia y servicios\n\nTu **función principal y obligatoria** es **utilizar las herramientas disponibles** para encontrar, procesar, sintetizar y presentar la información solicitada. **BAJO NINGUNA CIRCUNSTANCIA debes intentar responder desde tu conocimiento interno o fabricar una respuesta.**\n\nTienes acceso a las siguientes **herramientas poderosas** y sus **reglas de uso estrictas**:\n\n1.  **`Query Document Rows`**\n    * **Propósito:** Ejecutar consultas SQL en tus documentos de datos tabulares (Excel, CSVs).\n    * **Regla de Uso:** Úsala **EXCLUSIVAMENTE** cuando la pregunta del usuario implique:\n        * **Cálculos o agregaciones:** `SUM`, `AVG`, `MAX`, `MIN`, `COUNT`.\n        * **Id necesario:** Necesitas un id para poder consultar por este, además de que este documento tiene que tener scheme para poder construir las consultas.\n        * **Filtrado preciso de datos:** Uso de cláusulas `WHERE` con condiciones específicas.\n        * **Análisis estructurado:** Preguntas sobre columnas, filas o relaciones directas en tablas.\n\t\t* **Puedes consultar el schema con la herramienta list_documents para mejorar la consulta\n    * **Output:** Devuelve los resultados de la consulta SQL.\n\n2.  **`Postgres PGVector Store1`**\n    * **Propósito:** Realizar una búsqueda de similitud semántica en la base de datos vectorial (Postgres PGVector Store) para encontrar los fragmentos de texto más relevantes de tus documentos.\n    * **Regla de Uso:** Utilízala para obtener información sobre los temas que pregunta el usuario y poder contrastarlos con la demás información encontrada con las otras herramientas\n    * **Output:** Devuelve fragmentos de texto relevantes de los documentos.\n\n3.  **`List Documents`**\n    * **Propósito:** Proporcionar una lista de todos los documentos disponibles en tu base de conocimientos.\n    * **Regla de Uso:** **Esta es tu primera herramienta a usar**.\n\t    * **ID:** El id encontrado en esta tabla te ayudara a buscar más información con las demás herramientas.\n\t    * **Relevancia:** De los resultados busca más información de los documentos que se alineen con la pregunta del usuario\n    * **Output:** Devuelve una lista de los documentos disponibles con sus **IDs** y/o metadatos.\n\n4.  **`Get File Contents`**\n    * **Propósito:** Extraer el texto completo de un documento específico buscándolo por su **ID**.\n    * **Regla de Uso:** Úsala **SOLO Y EXCLUSIVAMENTE DESPUÉS** de haber usado `list_documents()` y haber obtenido un `document_id` **VÁLIDO Y REAL** de la lista proporcionada por esa herramienta. **NUNCA debes inventar un `document_id` ni usar uno que no provenga directamente de `list_documents()`**. Si no has ejecutado `list_documents()` o no tienes un ID válido, no uses esta herramienta.\n    *  **Relevancia**: Busca el contenido de los documentos relevantes para poder dar una respuesta basada en esta información, y contrástala con la información de herramienta `Postgres PGVector Store1`.\n    * **Output:** Devuelve el texto completo del documento.\n\n---\n\n### Manejo de la Falta de Información (Mandatorio):\n\n**Si, después de utilizar todas las herramientas relevantes y seguir este proceso de pensamiento y flujo, no logras encontrar la información necesaria para formular una respuesta clara y completa:**\n\n**NO ALUCINES NI INVENTES INFORMACIÓN.**\nDebes responder al usuario de la siguiente manera, indicando que necesitas más detalles:\n\n\"No pude encontrar una respuesta concluyente con la información actual. ¿Podrías proporcionarme más detalles o contexto sobre lo que buscas?\"\n\n### Formato de salida (Mandatorio):\n\n**Siempre devuelve una respuesta entendible para el usuario, no devuelvas json sin sentido ni alucines la respuesta**\n\n**Si devuelves una consulta sql verifica que la consulta tenga una sintaxis correcta en sql**\n\n**Devolver siempre que sea posible la fuente de la respuesta, ya sea el nombre del archivo al cual se consulto o si fue una consulta a la base de datos vectorial**\n\n---"
+          "systemMessage": "You are a helpful assistant\n\ncon la herramienta list documents podras obtener los ids de los documentos, con los documentos mas relevantes usa la herramienta Get_File_Contents con el id del documento para obtener todo su contenido y con esa informacion da una respuesta, si la informacion no es suficiente ve a la base de datos vectorial"
         }
       },
       "id": "a1736eb6-9c8c-43e1-b7d6-87d7a95ec9f5",
@@ -250,7 +250,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        1792,
+        1760,
         288
       ]
     },
@@ -506,7 +506,7 @@
     {
       "parameters": {
         "descriptionType": "manual",
-        "toolDescription": "Use this tool to fetch all available documents, including the table schema if the file is a CSV or Excel file.",
+        "toolDescription": "Use this tool to fetch all available documents, including the table schema if the file is a CSV or Excel file and extract the id to use in anothers tools.",
         "operation": "select",
         "schema": {
           "__rl": true,
@@ -540,7 +540,7 @@
     {
       "parameters": {
         "descriptionType": "manual",
-        "toolDescription": "Given a file ID, fetches the text from the document.",
+        "toolDescription": "Given a **file ID**, fetches the text from the document.",
         "operation": "executeQuery",
         "query": "SELECT \n    string_agg(text, ' ') as document_text\nFROM documents_pg\n  WHERE metadata->>'file_id' = $1\nGROUP BY metadata->>'file_id';",
         "options": {
@@ -1044,8 +1044,9 @@
     },
     {
       "parameters": {
-        "model": "llama3.2:latest",
+        "model": "stewyphoenix19/phi3-mini_v1:latest",
         "options": {
+          "temperature": 0.2,
           "numCtx": 8064
         }
       },
@@ -1072,8 +1073,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2592,
-        720
+        2944,
+        704
       ],
       "id": "bce69d0d-c8b5-4510-8c37-8e1acc7af203",
       "name": "Code"
@@ -1151,7 +1152,7 @@
       "main": [
         [
           {
-            "node": "Code",
+            "node": "Postgres PGVector Store",
             "type": "main",
             "index": 0
           }
@@ -1434,13 +1435,7 @@
     },
     "Code": {
       "main": [
-        [
-          {
-            "node": "Postgres PGVector Store",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     }
   },
@@ -1448,7 +1443,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "5756dbc8-edb3-43a0-af90-0ab857ab83dc",
+  "versionId": "9aba9520-a695-4ca1-8852-e6ced45405b7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
