@@ -175,21 +175,6 @@
     },
     {
       "parameters": {
-        "public": true,
-        "options": {}
-      },
-      "id": "74b15da4-1756-4293-b92d-7fc656d24bf4",
-      "name": "When chat message received",
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.1,
-      "position": [
-        1312,
-        288
-      ],
-      "webhookId": "e104e40e-6134-4825-a6f0-8a646d882662"
-    },
-    {
-      "parameters": {
         "operation": "pdf",
         "options": {}
       },
@@ -242,7 +227,7 @@
         "promptType": "define",
         "text": "={{ $json.chatInput }}",
         "options": {
-          "systemMessage": "You are a helpful assistant\n\ncon la herramienta list documents podras obtener los ids de los documentos, con los documentos mas relevantes usa la herramienta Get_File_Contents con el id del documento para obtener todo su contenido y con esa informacion da una respuesta, si la informacion no es suficiente ve a la base de datos vectorial"
+          "systemMessage": "You are a personal assistant who helps answer questions from a corpus of documents. The documents are either text based (Txt, docs, extracted PDFs, etc.) or tabular data (CSVs or Excel documents).\n\nYou are given tools to perform RAG in the 'documents' table, look up the documents available in your knowledge base in the 'document_metadata' table, extract all the text from a given document, and query the tabular files with SQL in the 'document_rows' table.\n\nAlways start by performing RAG unless the users asks you to check a document or the question requires a SQL query for tabular data (fetching a sum, finding a max, something a RAG lookup would be unreliable for). If RAG doesn't help, then look at the documents that are available to you, find a few that you think would contain the answer, and then analyze those.\n\nAlways tell the user if you didn't find the answer. Don't make something up just to please them."
         }
       },
       "id": "a1736eb6-9c8c-43e1-b7d6-87d7a95ec9f5",
@@ -544,7 +529,7 @@
         "operation": "executeQuery",
         "query": "SELECT \n    string_agg(text, ' ') as document_text\nFROM documents_pg\n  WHERE metadata->>'file_id' = $1\nGROUP BY metadata->>'file_id';",
         "options": {
-          "queryReplacement": "={{ $fromAI('file_id') }}"
+          "queryReplacement": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query_Parameters', `the id of listdocuments`, 'string') }}"
         }
       },
       "type": "n8n-nodes-base.postgresTool",
@@ -1044,9 +1029,9 @@
     },
     {
       "parameters": {
-        "model": "stewyphoenix19/phi3-mini_v1:latest",
+        "model": "llama3.2:latest",
         "options": {
-          "temperature": 0.2,
+          "temperature": 0.4,
           "numCtx": 8064
         }
       },
@@ -1054,7 +1039,7 @@
       "typeVersion": 1,
       "position": [
         1552,
-        512
+        528
       ],
       "id": "d0c89bb0-0e7e-4f4e-a8fd-476af7df1ff9",
       "name": "Ollama Chat Model",
@@ -1078,6 +1063,21 @@
       ],
       "id": "bce69d0d-c8b5-4510-8c37-8e1acc7af203",
       "name": "Code"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        288
+      ],
+      "id": "26fc4de7-62eb-4837-9888-a2bc1c678719",
+      "name": "When chat message received",
+      "webhookId": "c2b9c7bc-bee4-482c-89af-c1ee04ee24d0"
     }
   ],
   "pinData": {},
@@ -1131,17 +1131,6 @@
         [
           {
             "node": "RAG AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When chat message received": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
             "type": "main",
             "index": 0
           }
@@ -1437,13 +1426,24 @@
       "main": [
         []
       ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "9aba9520-a695-4ca1-8852-e6ced45405b7",
+  "versionId": "b32fbc80-dfd6-4103-8149-0b13df8b4ada",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "558d88703fb65b2d0e44613bc35916258b0f0bf983c5d4730c00c424b77ca36a"
